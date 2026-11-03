@@ -1,0 +1,52 @@
+@startuml
+title AgroTech Control Code Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+class SensorController {
+  +String ID
+  +enum type
+  +float value
+  +float normalValue
+  +float maxDiff
+  +float getValue()
+  +bool isInNormalBorders()
+}
+
+class DeviceController {
+  +String ID
+  +enum type
+  +void add(float amount)
+}
+
+class StorageController {
+  +String itemID
+  +enum type
+  +float value
+  +float minValue
+  +void setNewValue(float amount)
+}
+
+class ServiceLayer {
+  +void run()
+  +void stop()
+  +void runDiagnostics()
+}
+
+class RepositoryLayer {
+  +String connectionString
+  +void saveSensorData(String ID, enum type, float value)
+  +void saveDeviceCommand(String ID, float amount)
+  +void savePrognosis(String itemID, float amount)
+  +void sendAlarm(String deviceID, String text)
+}
+
+SensorController "1" -- "0..*" ServiceLayer : has
+DeviceController "1" -- "0..*" ServiceLayer : has
+DeviceController "1" -- "0..*" StorageController : has
+StorageController "1" -- "0..*" RepositoryLayer : has
+ServiceLayer "1" -- "0..*" RepositoryLayer : includes
+
+@enduml
